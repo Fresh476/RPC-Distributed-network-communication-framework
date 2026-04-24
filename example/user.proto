@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package MyRPC;
+
+option cc_generic_services=true;
+
+message ResultCode{
+    int32 errcode=1;
+    bytes errmsg=2;
+}
+
+message LoginRequest{
+    bytes name=1;
+    bytes pwd=2;
+}
+
+message LoginResponse{
+    ResultCode result=1;
+    bool success=2;
+}
+
+message RegisterRequest{
+    uint32 id=1; 
+    bytes name=2;
+    bytes pwd=3;
+}
+
+message RegisterResponse{
+    ResultCode result=1;
+    bool success=2;
+}
+
+// 该服务将生成一个UserServiceRpc类(提供服务)和一个UserServiceRpc_Stub类(发起请求)
+service UserServiceRpc{
+    // 该服务包含一个Login方法,接收LoginRequest类型的参数,返回LoginResponse类型的参数
+    rpc Login(LoginRequest) returns(LoginResponse);
+    // 注册方法
+    rpc Register(RegisterRequest) returns(RegisterResponse);
+}

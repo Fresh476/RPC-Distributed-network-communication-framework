@@ -1,0 +1,58 @@
+syntax = "proto3"; // 声明protobuf的版本
+
+package MyRPC; // 声明protobuf所在的包,相当于C++的命名空间
+
+// 定义下面的选项,生成service类和rpc方法描述
+option cc_generic_services=true;
+
+// 注意下面的int32 string等类型是protobuf自带的类型
+
+// 定义返回码消息,该消息有两个字段: errcode errmsg
+message ResultCode{
+    int32 errcode = 1; // 第一个字段是错误码
+    bytes errmsg = 2; // 第二个字段是错误消息
+}
+
+// 定义登录请求消息,该消息有两个字段: name pwd
+message LoginRequest{
+    bytes name = 1; // 第一个字段是name
+    bytes pwd = 2; // 第二个字段是pwd
+}
+
+// 定义登录响应消息,该消息有三个字段: errcode errmsg success
+message LoginResponse{
+    ResultCode result = 1; // 第一个字段是返回码类型
+    bool success = 2; // 第三个字段是登录是否成功
+}
+
+// 定义请求好友列表消息,该消息有一个字段: userid
+message GetFriendListRequest{
+    uint32 userid = 1;
+}
+
+// 定义用户信息,该信息有三个字段: name age sex(枚举)
+message User{
+    bytes name=1;
+    uint32 age=2;
+    enum Sex{
+        MAN = 0;
+        WOMAN = 1;
+    }
+    Sex sex=3;
+}
+
+// 定义获取好友列表响应消息,该消息有两个字段: result user(列表)
+message GetFriendListResponse{
+    ResultCode result = 1; // 第一个字段是返回码
+    repeated User friend_list = 2; // 第二个字段是用户信息(repeated表示可能有很多个)
+}
+
+// 定义服务接口,该接口内封装了多个可调用的函数,实现分布式不同模块间的跨主机调用
+// 格式: rpc 函数名(参数的消息类型) returns(消息类型)
+service UserServiceRpc{
+    // 定义Login服务,接收LoginRequest类型的消息作为参数,返回LoginResponse类型的消息
+    rpc Login(LoginRequest) returns(LoginResponse);
+    // 定义GetFriendLists服务,接收GetFriendListRequest类型的消息作为参数,返回GetFriendListResponse类型的消息
+    rpc GetFriendLists(GetFriendListRequest) returns(GetFriendListResponse);
+
+}

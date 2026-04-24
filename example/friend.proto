@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package MyRPC;
+
+option cc_generic_services=true;
+
+message ResultCode{
+    int32 errcode=1;
+    bytes errmsg=2;
+}
+
+// 获取好友列表请求
+message GetFriendsListRequest{
+    uint32 userid=1;
+}
+
+// 获取好友列表的响应
+message GetFriendsListResponse{
+    ResultCode result=1;
+    repeated bytes friends=2; // 名字列表
+}
+
+// 好友模块的服务
+service FriendServiceRpc{
+    // 获取好友列表信息的远程RPC方法
+    rpc GetFriendsList(GetFriendsListRequest) returns(GetFriendsListResponse);
+}
